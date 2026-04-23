@@ -1,21 +1,19 @@
-Automated 3D Point Cloud Processing Pipeline
-Overview
-This repository contains a Python-based spatial pipeline designed to ingest, clean, and classify raw 3D point cloud data (.las/.laz) generated from aerial photogrammetry or LiDAR surveys. The goal is to automate the heavy lifting required before generating 3D Digital Terrain Models (DTMs).
+# 3D LiDAR Point Cloud Processing Pipeline
 
-The Tech Stack
+## Overview
+This repository contains a custom Python-based pipeline for ingesting, filtering, and classifying high-resolution aerial LiDAR data. It is designed to process compressed `.laz` files, remove atmospheric/sensor noise, and classify bare-earth ground points using ASPRS standards.
 
-Python 3: Core processing language.
+## Tech Stack
+* **Language:** Python
+* **Libraries:** `laspy[lazrs]`, `numpy`, `time`
+* **Visualization:** QGIS (3D Map Views, Elevation/Z-Ramping, ASPRS Classification Symbology)
+* **Data Source:** OpenTopography (LINZ / New Zealand High-Resolution Terrain Data)
 
-laspy & numpy: Used for high-speed binary parsing of million-point datasets and vectorized statistical math.
+## Pipeline Features
+1. **Data Ingestion:** Reads millions of raw points from highly compressed LAZ formats.
+2. **Statistical QA/QC Noise Removal:** Calculates global Z-mean and standard deviation to automatically filter out high-Z outliers (e.g., sensor errors, birds, cloud reflections).
+3. **ASPRS Ground Classification:** Implements a global-minimum thresholding algorithm to isolate bare-earth points (Class 2) from unclassified structures and vegetation (Class 1).
+4. **Data Export:** Repackages the classified array into a clean `.laz` file with intact CRS/GPS coordinates for accurate GIS rendering.
 
-Standardization: Strictly utilizes ASPRS (American Society for Photogrammetry and Remote Sensing) classification codes.
-
-Pipeline Architecture:
-
-High-Volume Ingestion: Parses massive .las flight strips.
-
-QA/QC Noise Removal: Uses a Z-value statistical standard deviation mask to automatically detect and delete floating noise (clouds, birds) and sensor low-point errors.
-
-Ground Classification: Separates bare-earth "Ground" points (ASPRS Code 2) from "Non-Ground" structures/vegetation (ASPRS Code 1) to prepare the data for bare-earth 3D rasterization.
-
-Scalability: Designed to be wrapped in a for-loop to batch-process entire directories of aerial flight data simultaneously.
+## Future Improvements
+* Integration of a Progressive Morphological Filter (PMF) or PDAL to improve ground classification accuracy on highly sloped/hilly terrain.
